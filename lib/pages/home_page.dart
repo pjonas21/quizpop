@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quizpop/pages/question_page.dart';
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key, required this.title});
@@ -32,7 +33,14 @@ class MyHomePage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (context) => const QuestionPage(),
+                    ),
+                  );
+                },
                 child: const Text('Comecar Quiz'),
               ),
             ],
