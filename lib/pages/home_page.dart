@@ -37,7 +37,8 @@ class MyHomePage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute<void>(
-                      builder: (context) => const QuestionPage(),
+                      builder: (context) =>
+                          QuestionPage(questionIndex: 0, score: 0),
                     ),
                   );
                 },
