@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       // debugShowCheckedModeBanner: false,
       title: 'QuizPop',
       theme: tema,
-      home: MyHomePage(title: 'QuizPop'),
+      home: MyHomePage(),
     );
   }
 }

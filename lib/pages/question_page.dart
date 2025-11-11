@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:quizpop/models/question.dart';
 
 import 'package:quizpop/models/quiz_questions.dart';
+import 'package:quizpop/pages/result_page.dart';
 
 class QuestionPage extends StatefulWidget {
   final int questionIndex;
@@ -21,6 +22,42 @@ class _QuestionPageState extends State<QuestionPage> {
   bool answered = false;
   int? selectedOptionIndex;
 
+  void showResultDialog(bool isCorrect, int updatedScore) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(
+            isCorrect ? 'Correto!' : 'Incorreto!',
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+          backgroundColor: isCorrect ? Colors.lightBlue[800] : Colors.red[800],
+          contentTextStyle: TextStyle(fontSize: 18),
+          content: Text(
+            'Sua pontuação atual é $updatedScore.',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          actions: [
+            if (widget.questionIndex < questions.length - 1)
+              ElevatedButton(
+                onPressed: () {
+                  _handleNextQuestion(updatedScore);
+                },
+                child: Text('Próxima Pergunta'),
+              ),
+            if (answered && widget.questionIndex == questions.length - 1)
+              ElevatedButton(
+                onPressed: () {
+                  _showResultPage(updatedScore);
+                },
+                child: Text('Finalizar o quiz!'),
+              ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -32,16 +69,23 @@ class _QuestionPageState extends State<QuestionPage> {
       selectedOptionIndex = index;
       answered = true;
     });
+
+    Future.delayed(Duration(seconds: 1), () {
+      final isCorrect =
+          questions[widget.questionIndex].correctOption == selectedOptionIndex;
+      final updatedScore = isCorrect ? widget.score + 1 : widget.score;
+      showResultDialog(isCorrect, updatedScore);
+    });
   }
 
-  void _handleNextQuestion() {
+  void _handleNextQuestion(int updatedScore) {
     if (widget.questionIndex < questions.length - 1) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => QuestionPage(
             questionIndex: widget.questionIndex + 1,
-            score: widget.score,
+            score: updatedScore,
           ),
         ),
       );
@@ -50,10 +94,18 @@ class _QuestionPageState extends State<QuestionPage> {
     }
   }
 
+  void _showResultPage(int finalScore) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ResultPage(finalScore: finalScore),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final question = questions[widget.questionIndex];
-    final bool lastQuestion = widget.questionIndex == questions.length - 1;
 
     return Scaffold(
       appBar: AppBar(
@@ -85,6 +137,7 @@ class _QuestionPageState extends State<QuestionPage> {
               ...List.generate(question.options.length, (index) {
                 final option = question.options[index];
                 final isSelected = selectedOptionIndex == index;
+
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: ElevatedButton(
@@ -99,16 +152,6 @@ class _QuestionPageState extends State<QuestionPage> {
                 );
               }),
               SizedBox(height: 20),
-              if (answered && !lastQuestion)
-                ElevatedButton(
-                  onPressed: _handleNextQuestion,
-                  child: Text('Próxima Pergunta'),
-                ),
-              if (answered && widget.questionIndex == questions.length - 1)
-                ElevatedButton(
-                  onPressed: Navigator.of(context).pop,
-                  child: Text('Retornar ao início'),
-                ),
             ],
           ),
         ),

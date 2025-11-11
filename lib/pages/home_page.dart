@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:quizpop/pages/question_page.dart';
 
 class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+  const MyHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
