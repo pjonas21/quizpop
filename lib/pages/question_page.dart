@@ -48,7 +48,7 @@ class _QuestionPageState extends State<QuestionPage> {
             if (answered && widget.questionIndex == questions.length - 1)
               ElevatedButton(
                 onPressed: () {
-                  _showResultPage(updatedScore);
+                  _handleNextQuestion(updatedScore);
                 },
                 child: Text('Finalizar o quiz!'),
               ),
@@ -91,16 +91,13 @@ class _QuestionPageState extends State<QuestionPage> {
       );
     } else {
       // Navigate to results page
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ResultPage(finalScore: updatedScore),
+        ),
+      );
     }
-  }
-
-  void _showResultPage(int finalScore) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ResultPage(finalScore: finalScore),
-      ),
-    );
   }
 
   @override
